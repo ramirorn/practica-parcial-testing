@@ -1,5 +1,5 @@
-import type { TipoMaterial } from './multas.ts';
-import type { Categoria } from './socios.ts';
+import { calcularMulta, type TipoMaterial } from './multas.ts';
+import { aplicarDescuento, type Categoria } from './socios.ts';
 
 export interface Prestamo {
   tipo: TipoMaterial;
@@ -28,6 +28,23 @@ export const DIAS_ATRASO_BLOQUEO = 30;
  * EJERCICIO 5: implementá esta función siguiendo las reglas del ENUNCIADO.
  * Las pruebas de tests/prestamos.test.ts ya están escritas: no las modifiques.
  */
-export function resumirDevolucion(_devolucion: Devolucion): ResumenDevolucion {
-  throw new Error('No implementado');
+export function resumirDevolucion(devolucion: Devolucion): ResumenDevolucion {
+  // 1
+  if (devolucion.prestamos.length === 0) {
+    throw new RangeError("Los prestamos no deben estar vacios")
+  }
+
+  // 2
+  let multaBruta = 0;
+  for (const prestamo of devolucion.prestamos) {
+    multaBruta += calcularMulta(prestamo.diasAtraso, prestamo.tipo);
+  }
+
+  let multaFinal = aplicarDescuento(multaBruta, devolucion.categoria);
+
+  let descuento = multaBruta - multaFinal;
+
+  const bloqueado = (multaFinal >= UMBRAL_BLOQUEO) || (devolucion.prestamos.some((prestamo) => prestamo.diasAtraso > DIAS_ATRASO_BLOQUEO));
+
+  return { multaBruta, descuento, multaFinal, bloqueado }
 }

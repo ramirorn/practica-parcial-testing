@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { aplicarDescuento } from '../src/services/socios.ts';
+import { aplicarDescuento, type Categoria } from '../src/services/socios.ts';
 
 describe('aplicarDescuento', () => {
   it('aplica 50 % de descuento a un estudiante', () => {
@@ -19,6 +19,6 @@ describe('aplicarDescuento', () => {
   });
 
   it('rechaza una categoría inexistente', () => {
-    expect(() => aplicarDescuento(1000, 'vip')).toThrow(RangeError);
+    expect(() => aplicarDescuento(1000, 'vip' as Categoria)).toThrow(RangeError);
   });
 });
